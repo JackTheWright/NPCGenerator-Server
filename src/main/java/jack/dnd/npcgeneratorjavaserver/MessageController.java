@@ -113,7 +113,7 @@ public class MessageController {
     private final OpenAiChatModel chatModel;
 
     @GetMapping("/ai/generate")
-    public String generate() {
+    public NPCDetails generate() {
         Prompt prompt = new Prompt("Generate me a random, unique, Dungeons and Dragons NPC.",
                 OpenAiChatOptions.builder()
                         .withModel(ChatModel.GPT_4_O_MINI)
@@ -136,6 +136,6 @@ public class MessageController {
         npcDetails.setPersonalityTrait(jsonObj.getString("personalityTrait"));
         npcDetails.setAccent(jsonObj.getString("accent"));
         repository.save(npcDetails);
-        return npcDetails.toString();
+        return npcDetails;
     }
 }
