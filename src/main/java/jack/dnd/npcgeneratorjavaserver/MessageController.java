@@ -6,8 +6,16 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest.ResponseFormat;
 import org.springframework.ai.openai.api.OpenAiApi.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ai.openai.*;
+
+@EnableSpringDataWebSupport(
+        pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO
+)
 
 @RestController
 public class MessageController {
@@ -67,8 +75,13 @@ public class MessageController {
     // Aggregate root
     // tag::get-aggregate-root[]
     @GetMapping("/npcDetails")
-    List<NPCDetails> all() {
-        return repository.findAll();
+    Page<NPCDetails> all(@RequestParam(value = "offset", required = false) Integer offset,
+                         @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                         @RequestParam(value = "sortBy", required = false) String sortBy) {
+        if(null == offset) offset = 0;
+        if(null == pageSize) pageSize = 10;
+        if(null == sortBy) sortBy = "id";
+        return repository.findAll(PageRequest.of(offset, pageSize, Sort.by(sortBy)));
     }
     // end::get-aggregate-root[]
 
